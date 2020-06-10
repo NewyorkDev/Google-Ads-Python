@@ -1,5 +1,6 @@
 from googleads import adwords
 import uuid
+import re
 
 
 def getKeywordsForAllCampaigns(adwords_client, campaigns, numberOfKeywords):
@@ -137,17 +138,20 @@ def createCampaigns(adwords_client, campaignNames):
 def createAdGroups(adwords_client, data):
     print('Add Ad Groups!')
 
+    ad_group_service = adwords_client.GetService('AdGroupService', version='v201809')
+
     # Operations holds all the objects and all the Ad Groups we want to add
     operations = []
 
     for campaign in data:
-        campaignName = '[C] ' + campaign.name
-        for keyword in campaign.keywords:
+        campaignName = '[C] ' + campaign['name']
+        for keyword in campaign['keywords']:
+          print(keyword, campaignName)
           operations.append({
             'operator': 'ADD',
           'operand': {
-              'campaignName': campaignName,
-              'name': 'Earth to Venus Cruises #%s',
+              'campaignId': campaign['id'],
+              'name': '[AG] [SKAG] ' + keyword,
               'status': 'ENABLED',
               'biddingStrategyConfiguration': {
                   'bids': [
@@ -162,76 +166,39 @@ def createAdGroups(adwords_client, data):
           }
           })
 
-        
-    ad_group_service = adwords_client.GetService('AdGroupService', version='v201809')
-        
-
-    # Construct operations and add ad groups.
-    operations = [{
-        'operator': 'ADD',
-        'operand': {
-            'campaignName': campaignName,
-            'name': 'Earth to Mars Cruises #%s' % uuid.uuid4(),
-            'status': 'ENABLED',
-            'biddingStrategyConfiguration': {
-                'bids': [
-                    {
-                        'xsi_type': 'CpcBid',
-                        'bid': {
-                            'microAmount': '1000000'
-                        },
-                    }
-                ]
-            },
-            'settings': [
-                {
-                    # Targeting restriction settings. Depending on the
-                    # criterionTypeGroup value, most TargetingSettingDetail only
-                    # affect Display campaigns. However, the
-                    # USER_INTEREST_AND_LIST value works for RLSA campaigns -
-                    # Search campaigns targeting using a remarketing list.
-                    'xsi_type': 'TargetingSetting',
-                    'details': [
-                        # Restricting to serve ads that match your ad group
-                        # placements. This is equivalent to choosing
-                        # "Target and bid" in the UI.
-                        {
-                            'xsi_type': 'TargetingSettingDetail',
-                            'criterionTypeGroup': 'PLACEMENT',
-                            'targetAll': 'false',
-                        },
-                        # Using your ad group verticals only for bidding. This is
-                        # equivalent to choosing "Bid only" in the UI.
-                        {
-                            'xsi_type': 'TargetingSettingDetail',
-                            'criterionTypeGroup': 'VERTICAL',
-                            'targetAll': 'true',
-                        },
-                    ]
-                }
-            ]
-        }
-    }, {
-        'operator': 'ADD',
-        'operand': {
-            'campaignId': campaign_id,
-            'name': 'Earth to Venus Cruises #%s' % uuid.uuid4(),
-            'status': 'ENABLED',
-            'biddingStrategyConfiguration': {
-                'bids': [
-                    {
-                        'xsi_type': 'CpcBid',
-                        'bid': {
-                            'microAmount': '1000000'
-                        }
-                    }
-                ]
-            }
-        }
-    }]
     ad_groups = ad_group_service.mutate(operations)
 
+    return ad_groups
+
     # Display results.
+    # for ad_group in ad_groups['value']:
+    #     print('Ad group with name "%s" and id "%s" was added.'
+    #           % (ad_group['name'], ad_group['id']))
+
+
+def addKeywordsToAdGroups(adwords_client, ad_groups):
+    ad_group_criterion_service = adwords_client.GetService('AdGroupCriterionService', version='v201809')
+
+    operations = []
+
     for ad_group in ad_groups['value']:
-        print('Ad group with name "%s" and id "%s" was added.'
-              % (ad_group['name'], ad_group['id']))
+        adGroupId = ad_group['id']
+        adGroupName = ad_group['name']
+        keyword = adGroupName[12:]
+
+        operations.append({
+            'operator': 'ADD',
+            'operand': {
+                 'xsi_type': 'BiddableAdGroupCriterion',
+                 'adGroupId': adGroupId,
+                 'criterion': {
+                 'xsi_type': 'Keyword',
+                 'matchType': 'BROAD',
+                 'text': keyword
+                 }
+            }
+        })
+
+    ad_group_criteria = ad_group_criterion_service.mutate(operations)['value']
+    
+    return ad_group_criteria
