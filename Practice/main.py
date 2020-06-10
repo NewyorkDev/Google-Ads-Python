@@ -1,6 +1,9 @@
 from googleads import adwords
 import myModule
 import time
+import pprint
+
+ENABLE_VARIANT_MATCH_TYPES = True
 
 # adwords_client = adwords.AdWordsClient.LoadFromStorage('/Users/markfaulkner/Desktop/pythonTest/googleads.yaml')
 adwords_client = adwords.AdWordsClient.LoadFromStorage('/Users/markfaulkner/Desktop/GitHub_Repos/Google-Ads-Python/googleads.yaml')
@@ -9,6 +12,13 @@ campaigns = ['paramotor', 'ppg', 'paraglider']
 
 data = myModule.getKeywordsForAllCampaigns(adwords_client, campaigns, 2)
 print(data)
+
+if ENABLE_VARIANT_MATCH_TYPES:
+    print('Appending variant match types')
+
+data = myModule.appendVariantMatchTypes(data)
+
+# pprint.pprint(data)
 
 #  Now we can either fill a google sheet with the data or start creating campaigns
 

@@ -193,7 +193,7 @@ def addKeywordsToAdGroups(adwords_client, ad_groups):
                  'adGroupId': adGroupId,
                  'criterion': {
                  'xsi_type': 'Keyword',
-                 'matchType': 'BROAD',
+                 'matchType': 'BROAD', # or PHRASE, EXACT
                  'text': keyword
                  }
             }
@@ -202,3 +202,40 @@ def addKeywordsToAdGroups(adwords_client, ad_groups):
     ad_group_criteria = ad_group_criterion_service.mutate(operations)['value']
     
     return ad_group_criteria
+
+
+def appendVariantMatchTypes(campaigns):
+    # For every keyword in each campaign we need to generate 3 or 4 variants and append to the list
+
+    for campaign in campaigns:
+        newKeywords = []
+
+        for keyword in campaign['keywords']:
+            newKeywords.append(generateExactMatch(keyword))
+            newKeywords.append(generatePhraseMatch(keyword))
+            newKeywords.append(generateBroadMatchModifier(keyword))
+
+        for newKeyword in newKeywords:
+            campaign['keywords'].append(newKeyword)
+
+    return campaigns
+
+
+def generateExactMatch(keyword):
+    return '[' + keyword + ']'
+
+
+def generatePhraseMatch(keyword):
+    return '"' + keyword + '"'
+
+
+def generateBroadMatchModifier(keyword):
+    
+    hasSpace = re.search(" ", keyword)
+
+    if hasSpace != None:
+        string = "+" + re.sub(" ", " +", keyword)
+        return string
+
+    else:
+        return keyword
