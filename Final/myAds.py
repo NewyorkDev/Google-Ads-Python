@@ -298,15 +298,15 @@ def addNegativeKeywords(adwords_client, campaigns, negativeKeywords):
 
     response = shared_criterion_service.mutate(operations)
 
-    if 'value' in response:
-        for shared_criteria in response['value']:
-            # print('Added shared criterion ID %d "%s" to shared set with ID %d.' % (
-            #     shared_criteria['criterion']['id'],
-            #     shared_criteria['criterion']['text'],
-            #     shared_criteria['sharedSetId']
-            # ))
-    else:
-        raise errors.GoogleAdsError('No shared keyword was added.')
+    # if 'value' in response:
+    #     for shared_criteria in response['value']:
+    #         # print('Added shared criterion ID %d "%s" to shared set with ID %d.' % (
+    #         #     shared_criteria['criterion']['id'],
+    #         #     shared_criteria['criterion']['text'],
+    #         #     shared_criteria['sharedSetId']
+    #         # ))
+    # else:
+    #     raise errors.GoogleAdsError('No shared keyword was added.')
 
     for campaign in campaigns:
 
@@ -325,9 +325,9 @@ def addNegativeKeywords(adwords_client, campaigns, negativeKeywords):
 
         response = campaign_shared_set_service.mutate(operations)
 
-        if 'value' in response:
-            # print('Shared set ID %d was attached to campaign ID %d' % (
-            #     response['value'][0]['sharedSetId'], response['value'][0]['campaignId']
-            # ))
-        else:
-            raise errors.GoogleAdsError('No campaign shared set was added.')
+        # if 'value' in response:
+        #     # print('Shared set ID %d was attached to campaign ID %d' % (
+        #     #     response['value'][0]['sharedSetId'], response['value'][0]['campaignId']
+        #     # ))
+        # else:
+        #     raise errors.GoogleAdsError('No campaign shared set was added.')
