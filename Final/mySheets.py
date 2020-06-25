@@ -12,13 +12,14 @@ def getWorksheetValues(masterSheet, worksheetName):
     return values
 
 def addKeywordsToWorksheet(masterSheet, worksheetName, keywords):
-    tempWorksheet = masterSheet.worksheet(worksheetName)
-    newCells = []
+    if len(keywords) > 0:
+        tempWorksheet = masterSheet.worksheet(worksheetName)
+        newCells = []
 
-    for i, keyword in enumerate(keywords, start=1):
-        newCells.append(Cell(row=i, col=1, value=keyword))
-    
-    tempWorksheet.update_cells(newCells)
+        for i, keyword in enumerate(keywords, start=1):
+            newCells.append(Cell(row=i, col=1, value=keyword))
+        
+        tempWorksheet.update_cells(newCells)
 
 def getSpreadsheet(spreadsheetName, filePath):
     scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
