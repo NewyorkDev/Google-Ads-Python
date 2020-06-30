@@ -29,3 +29,7 @@
 11. Copy the "client_email" from "client_secret.json" and share that email with your google sheet
 12. Enable the Google Sheets API
 
+![Adwords chart](reporting-chart.png)
+
+
+
