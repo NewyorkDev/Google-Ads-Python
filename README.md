@@ -5,14 +5,15 @@
 ### The idea is to have a couple scripts that can start up an entire google ads account and manage basic operations
 
 ### This python script will 
-- Read campaign names from a list or Google Sheet
-- Generate keywords using the Google Keywords Planner API
-- Add keywords to a Google Sheet 
-- Create Campaigns
-- Create keyword variants
-- Add Ad Groups to Campaigns
-- Add keywords to the Ad Groups
-- 
+- Connect to Google Sheet
+- Get lists of Campaign Names & Negative Keywords from worksheets
+- Create new Worksheets for campaign names 
+- Generate keyword suggestions for each campaign
+- Save keyword suggestions to google sheets
+- Create Campaigns in Google Ads
+- Add newly created Campaign Id's to data
+- Add negative keywords to newly created campaigns
+- For each Campaign generate Skags for each match variant
 
 # Getting Started
 ### Google Sheets Setup
